@@ -1,0 +1,26 @@
+{
+    "name": "beeketing/tracker-hub",
+    "type": "library",
+    "description": "Segment.IO alternative",
+    "keywords": [
+        "segment.io",
+        "mixpanel"
+    ],
+    "homepage": "https://github.com/beeketing/tracker-hub",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Quan MT",
+            "email": "quan@beeketing.com",
+            "homepage": "http://beeketing.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "TrackerHub": "src/"
+        }
+    }
+}
