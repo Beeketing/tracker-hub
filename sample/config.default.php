@@ -7,4 +7,7 @@ $defaultConfig = array(
     'mixpanel' => array(
         'write_token' => '',
     ),
+    'indicative' => array(
+        'api_key' => '',
+    ),
 );

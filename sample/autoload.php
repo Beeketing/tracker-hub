@@ -72,3 +72,7 @@ function vdd($var = false, $trace = 1, $showHtml = false, $showFrom = true) {
     echo $var . "\n</pre>\n";
     die;
 }
+
+function echoLog($message) {
+    echo $message . "\n<br />";
+}
