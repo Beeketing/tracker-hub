@@ -54,8 +54,12 @@ class Indicative extends AbstractClient
             'apiKey' => $this->apiKey,
             'eventName' => $event,
             'eventUniqueId' => $userId,
-            'properties' => $params,
         );
+
+        // Indicative doesn't allow empty array as properties
+        if (count($params)) {
+            $requestData['properties'] = $params;
+        }
 
         $curlObj = $this->createCurlRequest($this->trackUrl, $requestData);
 
@@ -65,8 +69,8 @@ class Indicative extends AbstractClient
         curl_setopt($curlObj, CURLOPT_POSTFIELDS, $dataString);
         curl_setopt($curlObj, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlObj, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($dataString))
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($dataString))
         );
 
         $response = $this->sendRequest($curlObj);
