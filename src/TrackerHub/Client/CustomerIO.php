@@ -86,7 +86,6 @@ class CustomerIO extends AbstractClient
 
         curl_setopt($curlObj, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($curlObj, CURLOPT_USERPWD, $auth);
-        curl_setopt($curlObj, CURLOPT_VERBOSE, 1);
 
         $result = $this->sendRequest($curlObj);
 
