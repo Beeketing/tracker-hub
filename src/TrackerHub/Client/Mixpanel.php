@@ -55,16 +55,7 @@ class Mixpanel extends AbstractClient
         OPERATION_NAME: OPERATION_VALUE
         }
          */
-
-        $requestParams = array(
-            '$token' => $this->token,
-            '$distinct_id' => $userId,
-        );
-
-        if (isset($params['ip'])) {
-            $requestParams['$ip'] = $params['ip'];
-            unset($params['ip']);
-        }
+        $requestParams = $this->buildEngageParams($userId, $params);
 
         // Only use $set for now
         $requestParams['$set'] = $params;
@@ -105,7 +96,67 @@ class Mixpanel extends AbstractClient
         }
         $requestParams['properties']['token'] = $this->token;
 
+        // If this request has revenue property
+        if (isset($params['revenue']) && $params['revenue']) {
+            // Send a revenue request
+            // If not provided => time = now()
+            $params['time'] = (isset($params['time']) && $params['time']) ? $params['time'] : time();
+
+            $this->recordRevenue($userId, $params['revenue']);
+        }
+
         return $this->request($this->trackUrl, $requestParams);
+    }
+
+    /**
+     * Record revenue from user
+     * @param $userId
+     * @param $revenue
+     * @param null $time
+     * @return mixed
+     */
+    protected function recordRevenue($userId, $revenue, $time = null)
+    {
+        // If time is not provided
+        if (!$time) {
+            // Time is now
+            $time = time();
+        }
+        $dateTime = new \DateTime();
+        $dateTime->setTimestamp($time);
+
+        $requestParams = $this->buildEngageParams($userId);
+
+        // Build append transaction params
+        $requestParams['$append'] = [
+            '$transactions' => [
+                '$time' => $dateTime->format('Y-m-dTh:i:s'),
+                '$amount' => $revenue,
+            ],
+        ];
+
+        return $this->request($this->engageUrl, $requestParams);
+    }
+
+    /**
+     * Build engage params to send request
+     * @param $userId
+     * @param $params
+     * @return array
+     */
+    protected function buildEngageParams($userId, $params = array())
+    {
+        $requestParams = array(
+            '$token' => $this->token,
+            '$distinct_id' => $userId,
+        );
+
+        if (isset($params['ip'])) {
+            $requestParams['$ip'] = $params['ip'];
+            unset($params['ip']);
+        }
+
+        return $requestParams;
     }
 
     /**
