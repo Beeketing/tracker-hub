@@ -102,7 +102,7 @@ class Mixpanel extends AbstractClient
             // If not provided => time = now()
             $params['time'] = (isset($params['time']) && $params['time']) ? $params['time'] : time();
 
-            $this->recordRevenue($userId, $params['revenue']);
+            $this->recordRevenue($userId, $params['revenue'], $params['time'], $params);
         }
 
         return $this->request($this->trackUrl, $requestParams);
@@ -113,9 +113,10 @@ class Mixpanel extends AbstractClient
      * @param $userId
      * @param $revenue
      * @param null $time
+     * @param array $params
      * @return mixed
      */
-    protected function recordRevenue($userId, $revenue, $time = null)
+    protected function recordRevenue($userId, $revenue, $time = null, $params = [])
     {
         // If time is not provided
         if (!$time) {
@@ -125,12 +126,12 @@ class Mixpanel extends AbstractClient
         $dateTime = new \DateTime();
         $dateTime->setTimestamp($time);
 
-        $requestParams = $this->buildEngageParams($userId);
+        $requestParams = $this->buildEngageParams($userId, $params);
 
         // Build append transaction params
         $requestParams['$append'] = [
             '$transactions' => [
-                '$time' => $dateTime->format('Y-m-dTh:i:s'),
+                '$time' => $dateTime->format('Y-m-d\Th:i:s'),
                 '$amount' => $revenue,
             ],
         ];
