@@ -38,7 +38,8 @@ class Beeketing extends AbstractClient
      */
     public function identify($userId, array $params = array())
     {
-        $url = $this->baseUrl . $userId;
+        $url = $this->baseUrl . '/contacts.json';
+        $params['distinct_id'] = $userId;
         return $this->request($url, $params, 'POST');
     }
 
@@ -51,11 +52,12 @@ class Beeketing extends AbstractClient
      */
     public function track($userId, $event, array $params = array())
     {
-        $url = $this->baseUrl . $userId . '/events';
+        $url = $this->baseUrl . '/actions.json';
 
         $requestParams = array(
-            'name' => $event,
-            'data' => $params,
+            'distinct_id' => $userId,
+            'event' => $event,
+            'params' => $params,
         );
 
         return $this->request($url, $requestParams, 'POST');
@@ -73,7 +75,7 @@ class Beeketing extends AbstractClient
         $curlObj = $this->createCurlRequest($url, $params);
 
         curl_setopt($curlObj, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($curlObj, CURLOPT_HTTPHEADER, array('api: '. $this->apiKey));
+        curl_setopt($curlObj, CURLOPT_HTTPHEADER, array('X-Beeketing-Api-Key: '. $this->apiKey));
 
         $result = $this->sendRequest($curlObj);
 
