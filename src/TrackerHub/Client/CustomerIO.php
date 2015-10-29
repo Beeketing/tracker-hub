@@ -46,6 +46,9 @@ class CustomerIO extends AbstractClient
      */
     public function identify($userId, array $params = array())
     {
+        // Format
+        $params = $this->formatParams($params);
+
         $url = $this->baseUrl . $userId;
         return $this->request($url, $params, 'PUT');
     }
@@ -59,6 +62,9 @@ class CustomerIO extends AbstractClient
      */
     public function track($userId, $event, array $params = array())
     {
+        // Format
+        $params = $this->formatParams($params);
+
         $url = $this->baseUrl . $userId . '/events';
 
         $requestParams = array(
@@ -90,6 +96,21 @@ class CustomerIO extends AbstractClient
         $result = $this->sendRequest($curlObj);
 
         return $result;
+    }
+
+    /**
+     * Format data to convert date time to timestamp to use with customerio
+     * @param $params
+     */
+    protected function formatParams($params)
+    {
+        foreach ($params as $key => $value) {
+            if ($value instanceof \DateTime) {
+                $params[$key] = $value->getTimestamp();
+            }
+        }
+
+        return $params;
     }
 
 }

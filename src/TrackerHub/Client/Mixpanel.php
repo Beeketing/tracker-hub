@@ -55,6 +55,10 @@ class Mixpanel extends AbstractClient
         OPERATION_NAME: OPERATION_VALUE
         }
          */
+
+        // Format
+        $params = $this->formatParams($params);
+
         $requestParams = $this->buildEngageParams($userId, $params);
 
         // Only use $set for now
@@ -85,6 +89,9 @@ class Mixpanel extends AbstractClient
         }
         }
          */
+
+        // Format
+        $params = $this->formatParams($params);
 
         $requestParams = array(
             'event' => $event,
@@ -131,7 +138,7 @@ class Mixpanel extends AbstractClient
         // Build append transaction params
         $requestParams['$append'] = [
             '$transactions' => [
-                '$time' => $dateTime->format('Y-m-d\Th:i:s'),
+                '$time' => $dateTime->format(\DateTime::ISO8601),
                 '$amount' => $revenue,
             ],
         ];
@@ -186,5 +193,20 @@ class Mixpanel extends AbstractClient
         $result = $this->sendRequest($curlObj);
 
         return $result;
+    }
+
+    /**
+     * Format data to convert date time to timestamp to use with Mixpanel
+     * @param $params
+     */
+    protected function formatParams($params)
+    {
+        foreach ($params as $key => $value) {
+            if ($value instanceof \DateTime) {
+                $params[$key] = $value->format(\DateTime::ISO8601);
+            }
+        }
+
+        return $params;
     }
 }
