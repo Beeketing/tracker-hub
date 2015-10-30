@@ -202,8 +202,14 @@ class Mixpanel extends AbstractClient
     protected function formatParams($params)
     {
         foreach ($params as $key => $value) {
+            // Convert date time to ISO standard
             if ($value instanceof \DateTime) {
                 $params[$key] = $value->format(\DateTime::ISO8601);
+            }
+
+            // Set email
+            if ($key == 'email') {
+                $params['$email'] = $value;
             }
         }
 
