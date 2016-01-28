@@ -85,8 +85,10 @@ class Beeketing extends AbstractClient
         $curlObj = $this->createCurlRequest($url, $params, $isPost);
 
         curl_setopt($curlObj, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($curlObj, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-        curl_setopt($curlObj, CURLOPT_HTTPHEADER, array('X-Beeketing-Api-Key: ' . $this->apiKey));
+        curl_setopt($curlObj, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'X-Beeketing-Api-Key: ' . $this->apiKey
+        ));
 
         $result = $this->sendRequest($curlObj);
 
