@@ -54,13 +54,15 @@ class TrackerHub
 
         // Get clients list
         if (!empty($this->includeClients)) {
+            // Reset list
+            $clients = [];
             foreach ($this->clients as $client) {
                 if (in_array($client->getName(), $this->includeClients)) {
                     $clients[] = $client;
                 }
             }
         }
-        
+
         // Get ignore lists
         if (!empty($this->excludeClients)) {
             $ignoreClients = $this->excludeClients;
