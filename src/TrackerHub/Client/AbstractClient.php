@@ -31,9 +31,9 @@ abstract class AbstractClient implements ClientInterface
                 $postData = $params;
             }
             curl_setopt($curlObj, CURLOPT_POSTFIELDS, $postData);
-        } else {
+        } elseif (!empty($params)) {
             // Build http get request
-            $url .= http_build_query($params);
+            $url .= '?' . http_build_query($params);
         }
 
         curl_setopt($curlObj, CURLOPT_URL, $url);
