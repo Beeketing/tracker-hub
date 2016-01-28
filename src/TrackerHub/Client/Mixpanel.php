@@ -38,6 +38,11 @@ class Mixpanel extends AbstractClient
         $this->token = $token;
     }
 
+    public function getName()
+    {
+        return 'mixpanel';
+    }
+
     /**
      * Identify an user
      * @param $userId

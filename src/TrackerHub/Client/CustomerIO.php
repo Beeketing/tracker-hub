@@ -38,6 +38,11 @@ class CustomerIO extends AbstractClient
         $this->apiKey = $apiKey;
     }
 
+    public function getName()
+    {
+        return 'customerio';
+    }
+
     /**
      * Identify an user
      * @param $userId

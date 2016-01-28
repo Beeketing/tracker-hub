@@ -17,7 +17,19 @@ class TrackerHub
     /**
      * @var array
      */
-    protected $clients = array();
+    protected $clients = [];
+
+    /**
+     * Only track with these clients
+     * @var array
+     */
+    protected $includeClients = [];
+
+    /**
+     * Track all clients except these clients
+     * @var array
+     */
+    protected $excludeClients = [];
 
     /**
      * Add new client
@@ -34,9 +46,31 @@ class TrackerHub
      * @param $params
      * @return bool
      */
-    public function identify($userId, array $params = array()) {
+    public function identify($userId, array $params = array())
+    {
+        $ignoreClients = [];
+        $clients = $this->clients;
         /** @var ClientInterface $client */
-        foreach ($this->clients as $client) {
+
+        // Get clients list
+        if (!empty($this->includeClients)) {
+            foreach ($this->clients as $client) {
+                if (in_array($client->getName(), $this->includeClients)) {
+                    $clients[] = $client;
+                }
+            }
+        }
+        
+        // Get ignore lists
+        if (!empty($this->excludeClients)) {
+            $ignoreClients = $this->excludeClients;
+        }
+
+        foreach ($clients as $client) {
+            if (in_array($client->getName(), $ignoreClients)) {
+                continue;
+            }
+
             $client->identify($userId, $params);
         }
     }
@@ -48,11 +82,28 @@ class TrackerHub
      * @param array $params
      * @return bool
      */
-    public function track($userId, $event, array $params = array()) {
+    public function track($userId, $event, array $params = array())
+    {
         /** @var ClientInterface $client */
         foreach ($this->clients as $client) {
             $client->track($userId, $event, $params);
         }
+    }
+
+    /**
+     * @param array $includeClients
+     */
+    public function setIncludeClients($includeClients)
+    {
+        $this->includeClients = $includeClients;
+    }
+
+    /**
+     * @param array $excludeClients
+     */
+    public function setExcludeClients($excludeClients)
+    {
+        $this->excludeClients = $excludeClients;
     }
 
 } 

@@ -11,6 +11,7 @@ namespace TrackerHub\Client;
 
 interface ClientInterface
 {
+    public function getName();
 
     /**
      * Identify an user

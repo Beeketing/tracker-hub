@@ -30,6 +30,11 @@ class Beeketing extends AbstractClient
         $this->apiKey = $apiKey;
     }
 
+    public function getName()
+    {
+        return 'beeketing';
+    }
+
     /**
      * Identify an user
      * @param $userId
