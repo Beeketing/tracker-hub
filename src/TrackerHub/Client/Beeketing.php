@@ -26,7 +26,7 @@ class Beeketing extends AbstractClient
      */
     public function __construct($apiKey, $baseUrl)
     {
-        $this->$baseUrl = $baseUrl;
+        $this->baseUrl = $baseUrl;
         $this->apiKey = $apiKey;
     }
 
@@ -38,7 +38,7 @@ class Beeketing extends AbstractClient
      */
     public function identify($userId, array $params = array())
     {
-        $url = $this->baseUrl . '/contacts.json';
+        $url = $this->baseUrl . '/bk/api/contacts.json';
         $params['distinct_id'] = $userId;
         return $this->request($url, $params, 'POST');
     }
@@ -52,7 +52,7 @@ class Beeketing extends AbstractClient
      */
     public function track($userId, $event, array $params = array())
     {
-        $url = $this->baseUrl . '/actions.json';
+        $url = $this->baseUrl . '/bk/api/actions.json';
 
         $requestParams = array(
             'distinct_id' => $userId,
@@ -60,7 +60,7 @@ class Beeketing extends AbstractClient
             'params' => $params,
         );
 
-        return $this->request($url, $requestParams, 'POST');
+        return $this->request($url, $requestParams);
     }
 
     /**
@@ -70,11 +70,17 @@ class Beeketing extends AbstractClient
      * @param string $method
      * @return mixed
      */
-    protected function request($url, $params, $method = 'POST')
+    protected function request($url, $params, $method = 'GET')
     {
-        $curlObj = $this->createCurlRequest($url, $params);
+        $isPost = (bool) ($method == 'POST');
+        if ($isPost) {
+            $params = json_encode($params);
+        }
+
+        $curlObj = $this->createCurlRequest($url, $params, $isPost);
 
         curl_setopt($curlObj, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($curlObj, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         curl_setopt($curlObj, CURLOPT_HTTPHEADER, array('X-Beeketing-Api-Key: ' . $this->apiKey));
 
         $result = $this->sendRequest($curlObj);

@@ -14,20 +14,31 @@ abstract class AbstractClient implements ClientInterface
     /**
      * Create curl request
      * @param $url
-     * @param array $params
+     * @param array|string $params
      * @param bool $post
      * @return resource
      */
-    public function createCurlRequest($url, $params = array(), $post = true)
+    public function createCurlRequest($url, $params, $post = true)
     {
         $curlObj = curl_init();
 
-        curl_setopt($curlObj, CURLOPT_URL, $url);
         if ($post) {
+            // Build http post request
             curl_setopt($curlObj, CURLOPT_POST, 1);
+            if (is_array($params)) {
+                $postData = http_build_query($params);
+            } else {
+                $postData = $params;
+            }
+            curl_setopt($curlObj, CURLOPT_POSTFIELDS, $postData);
+        } else {
+            // Build http get request
+            $url .= http_build_query($params);
         }
 
-        curl_setopt($curlObj, CURLOPT_POSTFIELDS, http_build_query($params));
+        curl_setopt($curlObj, CURLOPT_URL, $url);
+
+
         curl_setopt($curlObj, CURLOPT_RETURNTRANSFER, true);
 
         return $curlObj;
