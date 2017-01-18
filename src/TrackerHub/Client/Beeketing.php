@@ -59,13 +59,18 @@ class Beeketing extends AbstractClient
     {
         $url = $this->baseUrl . '/bk/api/actions.json';
 
+        // Properties
+        if (isset($params['properties'])) {
+            unset($params['properties']);
+        }
+
         $requestParams = array(
             'distinct_id' => $userId,
             'event' => $event,
             'params' => $params,
         );
 
-        return $this->request($url, $requestParams);
+        return $this->request($url, $requestParams, 'POST');
     }
 
     /**
