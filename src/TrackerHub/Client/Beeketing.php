@@ -75,10 +75,7 @@ class Beeketing extends AbstractClient
 
     /**
      * Request
-     * @param $url
-     * @param $params
-     * @param string $method
-     * @return mixed
+     * @inheritdoc
      */
     protected function request($url, $params, $method = 'GET')
     {
@@ -95,8 +92,33 @@ class Beeketing extends AbstractClient
             'X-Beeketing-Api-Key: ' . $this->apiKey
         ));
 
-        $result = $this->sendRequest($curlObj);
+        list ($httpCode, $result) = $this->sendRequest($curlObj);
+
+        if ($httpCode !== 200) {
+            throw new \Exception(sprintf(
+                'Failed to sent request to beeketing track api, status code: %s, response: %s',
+                $httpCode,
+                $result
+            ));
+        }
 
         return $result;
+    }
+
+    /**
+     * Send request
+     * @param $curlObj
+     * @return mixed
+     */
+    public function sendRequest($curlObj)
+    {
+        $result = curl_exec($curlObj);
+        $httpCode = curl_getinfo($curlObj, CURLINFO_HTTP_CODE);
+        curl_close($curlObj);
+
+        return [
+            $httpCode,
+            $result
+        ];
     }
 }
